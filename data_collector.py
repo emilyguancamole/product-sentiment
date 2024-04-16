@@ -39,7 +39,7 @@ def get_page(url, headers):
     
     return soup
 
-def get_product_info(url, headers):
+def get_product_info(url):
     soup = get_page(url, headers)
     if not soup:
         print("WELP")
@@ -74,14 +74,14 @@ def get_product_info(url, headers):
     new_data_rows = pd.DataFrame(new_rows)
     df = pd.concat([df, new_data_rows], ignore_index=True) # Add new rows to dataframe
     # Write data to a file
-    df.to_csv("product_reviews.csv", index=False)
+    df_csv = df.to_csv("product_reviews.csv", index=False)
 
-    return df
+    return df_csv
 
     
 
 if __name__ == "__main__":
     url = "https://www.amazon.com/Govee-Electric-Gooseneck-Temperature-Stainless/product-reviews/B09TSKDKCL/" # reviews page
     # url = "https://www.amazon.com/dp/B0BQBMYR5R/"
-    data = get_product_info(url, headers)
+    data = get_product_info(url)
     

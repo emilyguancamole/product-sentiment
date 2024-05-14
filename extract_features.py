@@ -69,31 +69,6 @@ def extract_noun_chunks(text, filename_write):
     noun_chunks_series.value_counts().to_csv(filename_write) 
     return noun_chunks
 
-
-
-
-# POS tag each review NLTK
-
-# tagged_reviews = [nltk.pos_tag(nltk.word_tokenize(review)) for review in reviews_df['text']]
-# def extract_noun_sequences(tagged_words):
-#     noun_sequences = []
-#     current_sequence = []
-#     for word, pos_tag in tagged_words:
-#         if pos_tag.startswith('NN'):
-#             current_sequence.append(word)
-#         elif current_sequence:
-#             noun_sequences.append(' '.join(current_sequence))
-#             current_sequence = []
-#     if current_sequence:  # Handle the case where the last word(s) form a noun sequence
-#         noun_sequences.append(' '.join(current_sequence))
-#     return noun_sequences
-# all_noun_sequences = [sequence for tagged_review in tagged_reviews for sequence in extract_noun_sequences(tagged_review)]
-# noun_sequence_counts = Counter(all_noun_sequences)
-# # sort by descending count
-# noun_sequence_counts = pd.Series(noun_sequence_counts).sort_values(ascending=False)
-# noun_sequence_counts.to_csv('noun_sequences_nltk.csv')
-
-
 #** NOTE: goal is to create a list of features for products in general
 
 if __name__ == "__main__":
@@ -102,11 +77,13 @@ if __name__ == "__main__":
 
     # Extract nouns from reviews, get top k features
     print("NOUNS--------------------")
-    # nouns_extracted = extract_nouns_spacy(reviews_df['text'], 'handmade_nouns_spacy.csv')
-    # top_k_nouns(nouns_extracted, 10)
+    nouns_extracted = extract_nouns_spacy(reviews_df['text'], 'handmade_nouns_bal.csv')
+    top_k_nouns(nouns_extracted, 10)
+    # Chunks was not useful
     # print("\nCHUNKS--------------------")
     # noun_chunks = extract_noun_chunks(reviews_df['text'], 'handmade_noun_chunks_spacy.csv')
     # top_k_nouns(noun_chunks, 10)
 
-    nouns_extracted = pd.read_csv('handmade_nouns_bal.csv')
+    # Filter out nouns that occur less than k times
+    # nouns_extracted = pd.read_csv('handmade_nouns_bal.csv')
     filter_nouns_freq(nouns_extracted, 100, 'handmade_noun_fts.csv')

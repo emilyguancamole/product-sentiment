@@ -39,6 +39,7 @@ Ratings (1-5 scale) were converted to a sentiment label. The classification of 3
 Metrics are presented in order of the most lenient definition of "positive" to most stringent.
 
 When rating of 3,4,5 is positive; else negative
+
     TP:  14874
     TN:  2701
     FP:  7793
@@ -49,6 +50,7 @@ When rating of 3,4,5 is positive; else negative
     Accuracy:  0.6698810794328404
 
 When rating of 4,5 is positive; 3 is neutral; else negative (and predictions converted to pos/neu/neg)
+
     TP:  9666
     TN:  3201
     FP:  9351
@@ -59,6 +61,7 @@ When rating of 4,5 is positive; 3 is neutral; else negative (and predictions con
     Accuracy:  0.5729106371610491
 
 When rating of 4,5 is positive; else negative (and predictions converted to binary)
+
     TP:  10237
     TN:  3302
     FP:  12345

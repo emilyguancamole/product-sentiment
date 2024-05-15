@@ -1,6 +1,6 @@
 # Report: Product Review Sentiment Analysis
 ## Introduction
-This project analyzed the sentiment of product reviews on Amazon using lexicon-based methods. Whole-review analysis was performed to analyze the sentiment of the entire review. Additionally, targeted analysis was performed to evaluate the sentiment of a review towards a particular feature of the product. Both forms of sentiment analysis are important to businesses because they provide comprehensive insights into consumer perceptions and preferences, enabling businesses to understand the overall sentiment towards their products, as well as specific aspects that drive customer satisfaction or dissatisfaction. Most existing resources on lexicon-based sentiment analysis focus on analysis on the whole-review level, so this project explores the less-researched task of targeted lexicon-based sentiment analysis.
+This project analyzed the sentiment of product reviews on Amazon using lexicon-based methods. Whole-review analysis was performed to analyze the sentiment of the entire review. Additionally, targeted analysis was performed to evaluate the sentiment of a review towards a particular feature of the product. Both forms of sentiment analysis are important to businesses because they provide comprehensive insights into consumer perceptions and preferences, enabling businesses to understand the overall sentiment towards their products, as well as specific aspects that drive customer satisfaction or dissatisfaction. Most existing resources on lexicon-based sentiment analysis focus on analysis on the whole-review level, so this project explored the less-researched task of targeted lexicon-based sentiment analysis.
 
 ## Methods 
 Data used was the Amazon reviews dataset: https://amazon-reviews-2023.github.io/. This dataset contains products (identified by parent_asin), their star ratings (1-5 scale), reviews ('text' column), and other metadata. The data is separated into broad product categories, such as Cell_Phones_And_Accessories, Handmade, Books, etc. Each category has subcategories. The Handmade category was chosen for this project because the types of products it contains is very broad, spanning 646 subcategories. This increases the chance that the Handmade category represents products more generally, as opposed to a more niche category like Books.
@@ -24,11 +24,8 @@ Note that I will refer to "features" as "aspects" interchangeably in the rest of
 
 Then, sentiment analysis was performed in `targeted_sentiment.py`. For each review, I calculated the sentiment of each aspect mentioned in the review by calculating a weighted sum of the sentiments of words around the target aspect. In this way, higher weights were given to words closer to the aspect. The VADER lexicon (wrapped in NLTK's SentimentIntensityAnalyzer) was used to calculate sentiment towards each aspect. Negations, such as "not" and "no," were taken into account by negating the resulting sentiment of the word.
 
-<!-- ### Product-level targeted sentiment analysis
-Product-level targeted sentiment analysis was done with the data `handmade_reviews_processed.csv` (before balancing the dataset, such that each product still had at least 50 reviews). I used the same set of product features. For each product, I evaluated the overall sentiment of each aspect, where the sentiment was averaged across all reviews for the product. -->
-<!-- - CANT EVAULATE BC WOULD NEED AN AVERAGED, HANDLABELED ASPECT SENTIMENT SCORE AND THATS SOO LABOR INTENSIVE
-COULD DO WHOLE-REVIEW SENTIMENT ANALYSIS BY PRODUCT INSTEAD
-OR JUST NOT DO PRODUCT-LEVEL -->
+### Product-level targeted sentiment analysis
+Product-level targeted sentiment analysis was done with the data `handmade_reviews_processed.csv` (before balancing the dataset, such that each product still had at least 50 reviews). I used the same set of product features. For each product, I evaluated the overall sentiment of each aspect, where the sentiment was averaged across all reviews for the product. I did the same averaging procedure to predict the whole-review sentiment of the product across all of its reviews.
 
 
 ## Evaluation and Discussion
@@ -42,34 +39,34 @@ Ratings (1-5 scale) were converted to a sentiment label. The classification of 3
 Metrics are presented in order of the most lenient definition of "positive" to most stringent.
 
 When rating of 3,4,5 is positive; else negative
-TP:  14874
-TN:  2701
-FP:  7793
-FN:  868
-Precision:  0.6561962324083469
-Recall:  0.9448608817176979
-F1 score:  0.7745059751620714
-Accuracy:  0.6698810794328404
+    TP:  14874
+    TN:  2701
+    FP:  7793
+    FN:  868
+    Precision:  0.6561962324083469
+    Recall:  0.9448608817176979
+    F1 score:  0.7745059751620714
+    Accuracy:  0.6698810794328404
 
 When rating of 4,5 is positive; 3 is neutral; else negative (and predictions converted to pos/neu/neg)
-TP:  9666
-TN:  3201
-FP:  9351
-FN:  241
-Precision:  0.5082820634169427
-Recall:  0.9756737660240234
-F1 score:  0.6683722859908726
-Accuracy:  0.5729106371610491
+    TP:  9666
+    TN:  3201
+    FP:  9351
+    FN:  241
+    Precision:  0.5082820634169427
+    Recall:  0.9756737660240234
+    F1 score:  0.6683722859908726
+    Accuracy:  0.5729106371610491
 
 When rating of 4,5 is positive; else negative (and predictions converted to binary)
-TP:  10237
-TN:  3302
-FP:  12345
-FN:  253
-Precision:  0.45332565760340093
-Recall:  0.9758817921830315
-F1 score:  0.6190735365263668
-Accuracy:  0.5180013008378926
+    TP:  10237
+    TN:  3302
+    FP:  12345
+    FN:  253
+    Precision:  0.45332565760340093
+    Recall:  0.9758817921830315
+    F1 score:  0.6190735365263668
+    Accuracy:  0.5180013008378926
 
 #### Discussion
 In all three definitions of rating classes, there was a high frequency of false positives, meaning that reviews were predicted as having positive sentiment, when they were actually given negative ratings. This explains why a larger range of ratings categorized as "positive" increased precision and overall resulted in better quantitative metrics. The most significant change in these different definitions is the classification of a 3-star rating as positive, negative, or neutral. 
@@ -89,22 +86,47 @@ Some features detected by the model were not actually features; for instance, so
 I converted the predicted sentiment score for each aspect to ternary sentiment classes (positive, negative, or neutral). Ternary labeling was chosen because this is a "middle ground" in terms of strictness of a "positive" sentiment class. For all aspects that were truly features of the product (i.e. not "na"), I calculated precision, recall, F1, and accuracy of the model's predictions.
 
 #### Metrics
-TP:  36
-TN:  0
-FP:  46
-FN:  18
-Precision:  0.43902439024390244
-Recall:  0.6666666666666666
-F1 score:  0.5294117647058824
-Accuracy:  0.36
+    TP:  36
+    TN:  0
+    FP:  46
+    FN:  18
+    Precision:  0.43902439024390244
+    Recall:  0.6666666666666666
+    F1 score:  0.5294117647058824
+    Accuracy:  0.36
 
-### Discussion
+#### Discussion
 Overall, targeted sentiment did not perform as well as whole-review sentiment analysis. Similarly to the whole-review sentiment analysis, there was a high rate of false positives, suggesting that the model was more likely to predict the review as having a positive sentiment toward any aspect.
 
-Hand-labeling the sentiments of product features was trickier than anticipated. The actual meaning intended by the reviewer was often ambiguous, so I was not confident some of the labels I assigned to features. Thus, the "ground truth" labels produced by hand-labeling may not reflect the true sentiment intended by the reviewer.
+Hand-labeling the sentiments of product features was trickier than anticipated. The actual meaning intended by the reviewer was often ambiguous, so I was not confident in some of the labels I assigned to features. Thus, the "ground truth" labels produced by hand-labeling may not reflect the true sentiment intended by the reviewer.
 
 Additionally, the test set used only contained 20 reviews, which is a very small sample compared to the 161000+ total reviews. A small test set was used because hand-labeling the reviews was a time-consuming and manual process. A different test set may result in different metrics, and a larger test set may result in more reliable metrics that reflect the true performance of the model.
 
+## Product-Level Sentiment Analysis
+Evaluation of sentiment at the product level is qualitative, as each sentiment spans at least 50 reviews. I created a function in eval.ipynb that takes a product’s ASIN and summarizes the predicted whole-review sentiment and aspect-level sentiments, along with the actual average review for the product.
+
+An example result summary for a product is below. The predicted overall sentiment is positive, which is consistent with the actual average rating of 4.93 stars. On top of overall sentiment, this also displays the features of the product and the averaged sentiment towards each feature.
+
+    Predicted overall sentiment for product B0C9V4J9ZT: 1
+    Actual overall star rating: 4.93
+    Predicted sentiment for each aspect:
+        gift: 1.0
+        quality: 1.0
+        picture: -1.0
+        size: 1.0
+        purchase: 1.0
+        week: 1.0
+        work: 1.0
+        fall: 1.0
+        star: 1.0
+        room: 1.0
+        wall: 1.0
+        husband: -1.0
+        box: 1.0
+        need: 1.0
+        couple: 1.0
+        hang: -1.0
+        help: -1.0
 
 ## Conclusion
 Overall, my lexicon-based model was able to detect reviews with positive sentiment fairly well. However, it struggled with a high false positive rate, indicating that more measures for detecting negative sentiment should be incorporated. Detection of whole-review sentiment performed significantly better than targeted sentiment. The approach used for lexicon-based targeted sentiment analysis should be explored further, as most existing literature I found focused on whole-review analysis, but targeted sentiment may be more useful for businesses.

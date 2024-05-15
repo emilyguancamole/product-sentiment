@@ -55,7 +55,7 @@ def lemmatize_review(review, lemmatizer_model='nltk', nlp=None):
 def remove_stopwords(review):
     stop_words = stopwords.words('english')
     # Add extra stopwords relevant to the domain
-    # extra_stopwords = ['case', 'phone'] # TODO: add more, or make customizable
+    # extra_stopwords = ['case', 'phone'] 
     # stop_words.extend(extra_stopwords)
     return ' '.join([word for word in review.split() if word.lower() not in stop_words])
 

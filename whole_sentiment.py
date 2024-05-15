@@ -25,6 +25,24 @@ def get_whole_sentiment(reviews):
         sentiment_per_review.loc[i] = [review, sentiment]
     return sentiment_per_review
 
+def get_whole_sentiment_product(reviews):
+    ''' For a product, get sentiment of each of its review and average it for the product.
+    @param reviews: list of reviews
+    @return product_to_sent: dict of product to its average sentiemnt '''
+    sia = SentimentIntensityAnalyzer()
+    product_to_sent = {} # Dict of product to its average sentiemnt
+    
+    unqiue_products = reviews['parent_asin'].unique()
+    for i, product in enumerate(unqiue_products):
+        product_reviews = reviews[reviews['parent_asin'] == product]['text']
+        product_sent = 0
+        for review in product_reviews:
+            product_sent += sia.polarity_scores(review)['compound']
+        product_sent /= len(product_reviews)
+        product_to_sent[product] = product_sent
+    return product_to_sent
+
+
 def classify_sentiment_binary(sentiment):
     ''' Classify sentiment as positive or negative based on compound score. '''
     if sentiment >= 0:
@@ -39,10 +57,16 @@ if __name__ == "__main__":
     aspect_file = sys.argv[2]
     review_df = pd.read_csv(review_file).dropna(subset=['text'])
     review_df.head()
-    sentiments_df = get_whole_sentiment(review_df['text']) # df
+    # sentiments_df = get_whole_sentiment(review_df['text']) # df
+    # print(sentiments_df)
+    # sentiments_df.to_csv('whole_sentiment_output.csv', index=False)
 
-    print(sentiments_df)
-    sentiments_df.to_csv('whole_sentiment_output.csv', index=False)
+    product_sents = get_whole_sentiment_product(review_df)
+    print(product_sents)
+    sentiment_product_df = pd.DataFrame(product_sents, index=['sentiment']).T
+    print(sentiment_product_df)
+    sentiment_product_df.to_csv('whole_sentiment_product_output.csv')
+
 
 
 

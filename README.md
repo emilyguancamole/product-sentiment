@@ -1,7 +1,7 @@
 # Report: Product Review Sentiment Analysis
 ## Introduction
 This project analyzed the sentiment of product reviews on Amazon using lexicon-based methods. Whole-review analysis was performed to analyze the sentiment of the entire review. Additionally, targeted analysis was performed to evaluate the sentiment of a review towards a particular feature of the product. Both forms of sentiment analysis are important to businesses because they provide comprehensive insights into consumer perceptions and preferences, enabling businesses to understand the overall sentiment towards their products, as well as specific aspects that drive customer satisfaction or dissatisfaction. Most existing resources on lexicon-based sentiment analysis focus on analysis on the whole-review level, so this project explores the less-researched task of targeted lexicon-based sentiment analysis.
-
+git checkout --
 ## Methods 
 Data used was the Amazon reviews dataset: https://amazon-reviews-2023.github.io/. This dataset contains products (identified by parent_asin), their star ratings (1-5 scale), reviews ('text' column), and other metadata. The data is separated into broad product categories, such as Cell_Phones_And_Accessories, Handmade, Books, etc. Each category has subcategories. The Handmade category was chosen for this project because the types of products it contains is very broad, spanning 646 subcategories. This increases the chance that the Handmade category represents products more generally, as opposed to a more niche category like Books.
 

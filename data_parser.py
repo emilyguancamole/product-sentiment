@@ -38,9 +38,9 @@ def get_category_reviews(metadata, review_data, category):
     relevant_revs_df.to_csv(category_name + '_reviews.csv', index=False)
     return meta_df, relevant_revs_df
 
-def get_multiple_reviews_csv(metadata, review_data, category_name):
+def filter_multiple_reviews_csv(metadata, review_data, category_name):
     ''' 
-    Get review data with more than 5 reviews per product, for all subcategories in the overall category.
+    Filter review data to only keep products with more than 5 reviews per product, for all subcategories in the overall category.
     @params metadata, review_data: class 'datasets.arrow_dataset.Dataset'
     '''
     meta_df = pd.DataFrame(metadata)
@@ -60,7 +60,7 @@ def get_multiple_reviews_csv(metadata, review_data, category_name):
         print("No products with more than 5 reviews found.")
         return
     print("Relevant_reviews_df shape", relevant_reviews_df.shape)
-    relevant_reviews_df.to_csv(category_name + '_reviews.csv', index=False)
+    relevant_reviews_df.to_csv(category_name + '_reviews.csv')
     print("Filtered review data saved as", category_name + '_reviews.csv')
 
 
@@ -71,15 +71,8 @@ if __name__ == "__main__":
     '''
 
     # Load "full" splits of data and metadata
-    
-    # CELLPHONE DATA, SUB CATEGORY: Basic Cases ------------------
-    # phone_review_data = load_dataset("McAuley-Lab/Amazon-Reviews-2023", "raw_review_Cell_Phones_and_Accessories", split="full", trust_remote_code=True)
-    # phone_review_meta = load_dataset("McAuley-Lab/Amazon-Reviews-2023", "raw_meta_Cell_Phones_and_Accessories", split="full", trust_remote_code=True)
-    # category = 'Basic Cases'
-    # meta_cases_df, reviews_cases_df = get_category_reviews(phone_review_meta, phone_review_data, category)
-
     handmade_reviews_all = load_dataset("McAuley-Lab/Amazon-Reviews-2023", "raw_review_Handmade_Products",  split="full", trust_remote_code=True)
     handmade_meta_all = load_dataset("McAuley-Lab/Amazon-Reviews-2023", "raw_meta_Handmade_Products", split="full", trust_remote_code=True)
 
-    get_multiple_reviews_csv(handmade_meta_all, handmade_reviews_all, "handmade")
+    filter_multiple_reviews_csv(handmade_meta_all, handmade_reviews_all, "handmade")
     

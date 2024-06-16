@@ -1,3 +1,4 @@
+import argparse
 import sys
 import pandas as pd
 import numpy as np
@@ -122,9 +123,17 @@ def analyze_targeted_sentiment_products(reviews, target_aspects):
 
 
 if __name__ == "__main__":
-    review_file = sys.argv[1]
-    aspect_file = sys.argv[2]
-    # RUN: python targeted_sentiment.py handmade_reviews_balanced.csv handmade_noun_fts.csv
+    parser = argparse.ArgumentParser(description="Scrape product reviews from Amazon")
+    parser.add_argument("review_file", help="csv file with product reviews")
+    parser.add_argument("aspect_file", help="csv file with target aspects to get sentiment on")
+    parser.add_argument("--product-level", help="get sentiment at product-level, not review-level", action="store_true")
+    parser.add_argument("--output", help="csv file name to write the output to", default="targeted_sentiments.csv")
+    args = parser.parse_args()
+    review_file = args.review_file
+    aspect_file = args.aspect_file
+
+    # RUN Review-level: python targeted_sentiment.py handmade_reviews_balanced.csv handmade_noun_fts.csv --output review_targeted_sentiments.csv
+    # RUN Product-level: python targeted_sentiment.py handmade_reviews_balanced.csv handmade_noun_fts.csv --product-level --output product_targeted_sentiments.csv
 
     reviews_df = pd.read_csv(review_file, header=0).dropna(subset=['text'])
     
@@ -133,15 +142,17 @@ if __name__ == "__main__":
 
     aspects = pd.read_csv(aspect_file)['noun'] # List of aspects to get sentiment on
     print("Aspects:\n", aspects)
-    
-    # Targeted sentiment at REVIEW-level, not averaged for a product
-    review_sents = analyze_reviews(reviews_df, aspects) 
-    review_sent_df = pd.DataFrame(review_sents, columns=['asin', 'review', *aspects])
-    review_sent_df.to_csv("review_targeted_sentiments.csv")
-    print("Review sentiments:\n", review_sent_df.head())
+    print("output:", args.output)
+    if args.product_level:
+        # Targeted sentiment at PRODUCT-level, averaged across reviews for the product
+        product_sents = analyze_targeted_sentiment_products(reviews_df, aspects)
+        sentiment_df = pd.DataFrame(product_sents, index=aspects.index).T
+        sentiment_df.columns = aspects # Map column names to the aspect names 
+        
+    else:
+        # Targeted sentiment at REVIEW-level, not averaged for a product
+        review_sents = analyze_reviews(reviews_df, aspects) 
+        sentiment_df = pd.DataFrame(review_sents, columns=['asin', 'review', *aspects])
 
-    # Targeted sentiment at PRODUCT-level, averaged across reviews for the product
-    # product_sents = analyze_targeted_sentiment_products(reviews_df, aspects)
-    # sentiment_df = pd.DataFrame(product_sents, index=aspects.index).T
-    # sentiment_df.columns = aspects # Map column names to the aspect names
-    # sentiment_df.to_csv("product_targeted_sentiments.csv")
+    sentiment_df.to_csv(args.output)
+    print("Review sentiments:\n", sentiment_df.head())

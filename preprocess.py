@@ -3,10 +3,10 @@ import contractions
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+from langdetect import detect, DetectorFactory
 from bs4 import BeautifulSoup
 import spacy
 import re
-from custom_definitions import CONTRACTIONS_MAP
 
 
 def expand_contractions(text, contraction_mapping):
@@ -58,6 +58,19 @@ def remove_stopwords(review):
     # extra_stopwords = ['case', 'phone'] 
     # stop_words.extend(extra_stopwords)
     return ' '.join([word for word in review.split() if word.lower() not in stop_words])
+
+
+def filter_english_reviews(reviews_df):
+    '''Detect language and filter out non-English reviews from df'''
+    DetectorFactory.seed = 3
+    reviews = reviews_df['text']
+    for review in reviews:
+        try:
+            if detect(review) != 'en':
+                reviews_df = reviews_df[reviews_df['text'] != review]
+        except: # language detection fails
+            continue
+    return reviews_df
 
 
 def preprocess_review(review):
@@ -120,6 +133,7 @@ def preprocess_and_save_in_batches(reviews_df, batch_size=10000, output_file='pr
     
 if __name__ == "__main__":
     # metadata = pd.read_csv('Basic_Cases_meta.csv')
+    reviews_df = pd.read_csv("handmade_reviews_proc_balanced.csv")
 
     reviews_df = pd.read_csv('handmade_reviews.csv')
     print(f"Len handmade reviews: {len(reviews_df)}")
@@ -127,16 +141,19 @@ if __name__ == "__main__":
     reviews_df = reviews_df.drop(columns=['images', 'user_id', 'timestamp', 'helpful_vote', 'verified_purchase'])
     # Remove reviews that don't have text
     reviews_df = reviews_df.dropna(subset=['text'])
+    # Only English reviews
+    reviews_df = filter_english_reviews(reviews_df)
 
-    # df_test = reviews_df[-5:] # Test on a small subset
-    # print("Original reviews:")
-    # print(df_test.head())
-    # reviews_df = preprocess_all_reviews(df_test)
+    df_test = reviews_df[-5:] # Test on a small subset
+    print("Original reviews:")
+    print(df_test.head())
+    reviews_df = preprocess_all_reviews(df_test)
 
     # Preprocess all reviews
     preprocess_and_save_in_batches(reviews_df, batch_size=1000, output_file='handmade_reviews_processed.csv')
 
-    
+    # to csv
+    reviews_df.to_csv('handmade_reviews_proc_balanced.csv', index=False)
 
 
     

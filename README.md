@@ -4,13 +4,18 @@ This project analyzed the sentiment of Amazon reviews using lexicon-based method
 
 ## Achievements/Strengths
 The dataset used was the Handmade category in Amazon products. This dataset is large (161,000+ reviews after processing) and spans a diverse set of product subcategories. Because multi-domain targeted sentiment analysis is a challenge ([Toledo-Ronen et al](https://aclanthology.org/2022.naacl-main.198.pdf)), this diversity increases the likelihood of the model performing well when applied to other domains. 
+
 I conducted both review-level and targeted sentiment analysis (which is more informative).
+
 Target aspects mentioned in reviews were found with a frequency-based approach (Yarowsky; [Pradhan and Sharma](https://link.springer.com/chapter/10.1007/978-981-16-0733-2_35)).
 Balanced the dataset by rating to provide fairer evaluation. Existing literature I read left the reviews skewed towards 5-star ratings. 
 This might not affect the prediction produced by lexicon-based models. However, this likely would have inflated the performance of my model. Balancing gives a fairer (albeit stricter) evaluation of its performance across all ratings.
+
 Quantitative evaluation of review-level and targeted sentiment. Review-level evaluation included exploration of the results with different definitions of rating classifications. Targeted sentiment evaluation involved labeling a test subset by hand and calculating the same quantitative metrics.
 My model was able to detect reviews with positive sentiment with a recall of 94.5-97.6%.
+
 Product-level sentiment analysis takes the average of sentiment scores for a product across all of its reviews. As part of empirical “evaluation” in eval.ipynb, `get_avg_product_sentiment` takes a product’s ASIN and summarizes the predicted whole-review sentiment and aspect-level sentiments, along with the average review for the product.
+
 Ability to scrape reviews of a new Amazon product by providing the product's review page to `data_collector.py`. 
 
 ## Methods 
@@ -183,11 +188,11 @@ Evaluation of sentiment at the product level is qualitative, as each sentiment s
 ## Running the Code
 Whole-Review Sentiment Analysis (whole_sentiment.py): 
 `python whole_sentiment.py reviews_data_file.csv features_data_file.csv`
-Example: `python whole_sentiment.py handmade_reviews_balanced.csv handmade_noun_fts.csv`
+- Example: `python whole_sentiment.py handmade_reviews_balanced.csv handmade_noun_fts.csv`
 
 Targeted Sentiment Analysis (targeted_sentiment.py): 
 `python targeted_sentiment.py reviews_data_file.csv features_data_file.csv`
-Example: `python targeted_sentiment.py handmade_reviews_balanced.csv handmade_noun_fts.csv`
+- Example: `python targeted_sentiment.py handmade_reviews_balanced.csv handmade_noun_fts.csv`
 
 To get new data:
 `python data_collector.py url_of_amazon_product_review_page`
